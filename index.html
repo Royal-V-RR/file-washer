@@ -1,0 +1,848 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rinse Cycle</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#16302E;
+    --base:#EDE6D6;
+    --paper:#FBF8F1;
+    --teal:#2F6F6B;
+    --tealDeep:#1B3F3D;
+    --tealDark:#12302E;
+    --brass:#C79A3E;
+    --coral:#E2673A;
+    --bubble:#BFE3E0;
+    --lineSoft:rgba(22,48,46,0.15);
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    background:var(--base);
+    color:var(--ink);
+    font-family:'Inter',sans-serif;
+    line-height:1.5;
+  }
+  h1,h2,h3{
+    font-family:'Fraunces',serif;
+    font-weight:600;
+    margin:0 0 0.4em 0;
+    letter-spacing:-0.01em;
+  }
+  a{color:inherit;}
+
+  .topBar{
+    position:sticky;
+    top:0;
+    z-index:20;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:18px 32px;
+    background:var(--base);
+    border-bottom:1px solid var(--lineSoft);
+  }
+  .brandMark{
+    font-family:'Fraunces',serif;
+    font-weight:700;
+    font-size:1.3rem;
+    display:flex;
+    align-items:center;
+    gap:8px;
+  }
+  .brandMark .dot{
+    width:10px;height:10px;border-radius:50%;
+    background:var(--teal);
+    box-shadow:0 0 0 3px rgba(47,111,107,0.2);
+  }
+  .topNav{display:flex;gap:28px;font-size:0.92rem;}
+  .topNav a{
+    text-decoration:none;
+    color:var(--ink);
+    opacity:0.75;
+    padding-bottom:3px;
+    border-bottom:1px solid transparent;
+    transition:opacity 0.2s, border-color 0.2s;
+  }
+  .topNav a:hover{opacity:1;border-color:var(--teal);}
+
+  section{
+    padding:72px 32px;
+    max-width:1080px;
+    margin:0 auto;
+  }
+  .lede{
+    max-width:620px;
+  }
+  .lede h1{font-size:clamp(2rem,4vw,2.9rem);}
+  .lede p{
+    font-size:1.05rem;
+    opacity:0.82;
+    max-width:520px;
+  }
+
+  .stage{
+    margin-top:48px;
+    display:grid;
+    place-items:center;
+  }
+
+  /* ---------- drop zone ---------- */
+  .dropZone{
+    width:100%;
+    max-width:560px;
+    border:1.5px dashed rgba(22,48,46,0.35);
+    border-radius:18px;
+    background:var(--paper);
+    padding:40px 28px;
+    text-align:center;
+    transition:border-color 0.2s, background 0.2s;
+    cursor:pointer;
+  }
+  .dropZone.hover{
+    border-color:var(--teal);
+    background:#F3EFE1;
+  }
+  .dropZone p{margin:0 0 14px 0;opacity:0.75;font-size:0.95rem;}
+  .dropZone .pickBtn{
+    display:inline-block;
+    padding:10px 22px;
+    border-radius:999px;
+    background:var(--ink);
+    color:var(--paper);
+    font-size:0.9rem;
+    font-weight:500;
+    border:none;
+    cursor:pointer;
+  }
+  .dropZone .pickBtn:hover{background:var(--tealDeep);}
+  .dropZone .hint{
+    margin-top:14px;
+    font-size:0.78rem;
+    opacity:0.5;
+  }
+
+  /* ---------- washing machine ---------- */
+  .washerRig{
+    width:100%;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:26px;
+  }
+  .machine{
+    width:340px;
+    background:linear-gradient(180deg,var(--teal),var(--tealDeep));
+    border-radius:26px 26px 18px 18px;
+    box-shadow:0 30px 60px -25px rgba(18,48,46,0.55), inset 0 0 0 2px rgba(255,255,255,0.06);
+    padding:20px 20px 30px 20px;
+    position:relative;
+  }
+  .panel{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:0 4px 18px 4px;
+  }
+  .brandPlate{
+    font-family:'Fraunces',serif;
+    font-size:0.72rem;
+    letter-spacing:0.08em;
+    color:rgba(251,248,241,0.85);
+  }
+  .dials{display:flex;gap:8px;}
+  .dial{
+    width:16px;height:16px;border-radius:50%;
+    background:radial-gradient(circle at 35% 30%, var(--brass), #8a6a25 75%);
+    box-shadow:inset 0 0 0 1px rgba(0,0,0,0.2);
+  }
+  .display{
+    margin:0 4px 18px 4px;
+    background:var(--tealDark);
+    border-radius:10px;
+    padding:12px 16px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    box-shadow:inset 0 2px 6px rgba(0,0,0,0.4);
+  }
+  .display .statusText{
+    color:rgba(234,246,244,0.85);
+    font-size:0.85rem;
+    text-align:center;
+    line-height:1.3;
+  }
+  .doorFrame{
+    width:100%;
+    aspect-ratio:1/1;
+    border-radius:50%;
+    background:linear-gradient(160deg,#F1EEE4,#C9C4B4 55%,#8f8b7d);
+    padding:14px;
+    box-shadow:0 10px 20px rgba(0,0,0,0.25), inset 0 0 0 2px rgba(255,255,255,0.4);
+  }
+  .doorGlass{
+    width:100%;height:100%;border-radius:50%;
+    background:radial-gradient(circle at 35% 30%, #2C5654, #0E2624 78%);
+    position:relative;
+    overflow:hidden;
+    box-shadow:inset 0 0 24px rgba(0,0,0,0.6);
+  }
+  .doorGlass.unlocked{
+    box-shadow:inset 0 0 24px rgba(0,0,0,0.6), 0 0 0 6px rgba(199,154,62,0.5);
+  }
+  .waterLayer{
+    position:absolute;
+    left:0;right:0;bottom:0;
+    height:62%;
+    background:
+      linear-gradient(180deg, rgba(191,227,224,0.28), rgba(191,227,224,0.5)),
+      radial-gradient(circle at 30% 20%, rgba(255,255,255,0.15), transparent 60%);
+    animation:slosh 4.5s ease-in-out infinite;
+  }
+  @keyframes slosh{
+    0%,100%{transform:translateY(0) scaleY(1);}
+    50%{transform:translateY(-4%) scaleY(1.04);}
+  }
+  .drum{
+    position:absolute;
+    inset:0;
+  }
+  .tumbler{
+    position:absolute;
+    top:50%;left:50%;
+    width:52px;height:52px;
+    margin:-26px 0 0 -26px;
+    border-radius:9px;
+    object-fit:cover;
+    box-shadow:0 4px 10px rgba(0,0,0,0.4);
+    animation-name:tumble;
+    animation-timing-function:linear;
+    animation-iteration-count:infinite;
+  }
+  @keyframes tumble{
+    0%{transform:translate(-38px,-40px) rotate(0deg);}
+    25%{transform:translate(34px,-18px) rotate(95deg);}
+    50%{transform:translate(-6px,36px) rotate(190deg);}
+    75%{transform:translate(-40px,4px) rotate(280deg);}
+    100%{transform:translate(-38px,-40px) rotate(360deg);}
+  }
+  .bubble{
+    position:absolute;
+    bottom:-10px;
+    border-radius:50%;
+    background:rgba(255,255,255,0.35);
+    animation-name:rise;
+    animation-timing-function:ease-in;
+    animation-iteration-count:infinite;
+  }
+  @keyframes rise{
+    0%{transform:translateY(0);opacity:0;}
+    10%{opacity:0.8;}
+    100%{transform:translateY(-230px);opacity:0;}
+  }
+  .legRow{
+    display:flex;
+    justify-content:space-between;
+    padding:16px 30px 0 30px;
+  }
+  .leg{
+    width:14px;height:10px;
+    background:var(--tealDark);
+    border-radius:0 0 4px 4px;
+  }
+
+  .washCopy{
+    text-align:center;
+    max-width:420px;
+  }
+  .washCopy p{opacity:0.72;font-size:0.92rem;}
+
+  .doneCard{
+    width:100%;
+    max-width:560px;
+    background:var(--paper);
+    border-radius:18px;
+    padding:32px 28px;
+    text-align:center;
+  }
+  .doneCard h3{margin-bottom:6px;}
+  .doneCard p{opacity:0.72;font-size:0.92rem;margin-top:0;}
+  .doneGrid{
+    display:flex;
+    flex-wrap:wrap;
+    gap:10px;
+    justify-content:center;
+    margin:22px 0;
+  }
+  .doneItem{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:6px;
+    font-size:0.72rem;
+  }
+  .doneItem img{
+    width:66px;height:66px;
+    object-fit:cover;
+    border-radius:8px;
+    box-shadow:0 4px 12px rgba(0,0,0,0.15);
+  }
+  .doneItem a{
+    text-decoration:none;
+    color:var(--teal);
+    font-weight:500;
+  }
+  .ghostBtn{
+    padding:10px 22px;
+    border-radius:999px;
+    border:1px solid var(--ink);
+    background:transparent;
+    color:var(--ink);
+    font-size:0.9rem;
+    cursor:pointer;
+  }
+  .ghostBtn:hover{background:var(--ink);color:var(--paper);}
+
+  /* ---------- convert section ---------- */
+  .convertSection{
+    background:var(--paper);
+    border-radius:28px;
+    margin:0 32px 72px 32px;
+    max-width:1016px;
+  }
+  .convertHead{max-width:560px;}
+  .convertHead p{opacity:0.72;font-size:0.95rem;}
+  .convertControls{
+    display:flex;
+    flex-wrap:wrap;
+    gap:16px;
+    align-items:center;
+    margin:28px 0;
+  }
+  .formatPicker{
+    display:flex;
+    flex-direction:column;
+    gap:4px;
+    font-size:0.78rem;
+    opacity:0.75;
+  }
+  select{
+    font-family:'Inter',sans-serif;
+    font-size:0.92rem;
+    padding:10px 14px;
+    border-radius:10px;
+    border:1px solid var(--lineSoft);
+    background:var(--base);
+    color:var(--ink);
+  }
+  .convertDrop{
+    flex:1;
+    min-width:220px;
+    border:1.5px dashed rgba(22,48,46,0.3);
+    border-radius:14px;
+    padding:16px 20px;
+    text-align:center;
+    cursor:pointer;
+    font-size:0.88rem;
+    opacity:0.8;
+    transition:border-color 0.2s;
+  }
+  .convertDrop.hover{border-color:var(--teal);opacity:1;}
+
+  .convertQueue{
+    list-style:none;
+    margin:0;
+    padding:0;
+    display:flex;
+    flex-direction:column;
+    gap:12px;
+  }
+  .queueItem{
+    display:grid;
+    grid-template-columns:1fr auto;
+    gap:16px;
+    align-items:center;
+    background:var(--base);
+    border-radius:12px;
+    padding:14px 18px;
+  }
+  .fileMeta{min-width:0;}
+  .fileMeta .name{
+    font-weight:500;
+    font-size:0.92rem;
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+  }
+  .fileMeta .tag{
+    font-size:0.72rem;
+    opacity:0.55;
+    margin-top:2px;
+  }
+  .queueAction{
+    text-align:right;
+    font-size:0.8rem;
+  }
+  .queueAction .statusLabel{
+    opacity:0.65;
+  }
+  .queueAction a{
+    text-decoration:none;
+    background:var(--ink);
+    color:var(--paper);
+    padding:8px 16px;
+    border-radius:999px;
+    font-size:0.82rem;
+  }
+  .queueAction a:hover{background:var(--tealDeep);}
+
+  .noteStrip{
+    max-width:1080px;
+    margin:0 auto 60px auto;
+    padding:0 32px;
+    font-size:0.8rem;
+    opacity:0.5;
+    text-align:center;
+  }
+
+  footer{
+    border-top:1px solid var(--lineSoft);
+    padding:40px 32px;
+    text-align:center;
+    font-size:0.85rem;
+    opacity:0.65;
+  }
+  footer a{color:var(--teal);text-decoration:none;font-weight:500;}
+  footer a:hover{text-decoration:underline;}
+
+  @media (max-width:640px){
+    section{padding:52px 20px;}
+    .convertSection{margin:0 20px 52px 20px;}
+    .queueItem{grid-template-columns:1fr;justify-items:start;gap:10px;}
+    .queueAction{text-align:left;}
+  }
+
+  @media (prefers-reduced-motion:reduce){
+    .tumbler,.bubble,.waterLayer{animation:none !important;}
+  }
+
+  input[type=file]{display:none;}
+</style>
+</head>
+<body>
+
+<header class="topBar">
+  <div class="brandMark"><span class="dot"></span>Rinse Cycle</div>
+  <nav class="topNav">
+    <a href="#wash">The Wash</a>
+    <a href="#convert">The Converter</a>
+  </nav>
+</header>
+
+<section id="wash">
+  <div class="lede">
+    <h1>Restore every photo to its best condition.</h1>
+    <p>Rinse Cycle runs each image through a full wash cycle, calibrated for careful, consistent results. Load a photo below to begin.</p>
+  </div>
+
+  <div class="stage">
+    <div class="dropZone" id="washDrop">
+      <p>Drag a photo here, or choose one from your device.</p>
+      <button type="button" class="pickBtn" id="washPickBtn">Choose a photo</button>
+      <input type="file" id="washInput" accept="image/*" multiple>
+      <div class="hint">Your photo is saved to this browser's storage for the length of the cycle.</div>
+    </div>
+
+    <div class="washerRig" id="washerRig" hidden>
+      <div class="machine">
+        <div class="panel">
+          <div class="brandPlate">RINSE CYCLE</div>
+          <div class="dials"><span class="dial"></span><span class="dial"></span><span class="dial"></span></div>
+        </div>
+        <div class="display">
+          <div class="statusText" id="statusText" aria-live="polite">Loading the drum</div>
+        </div>
+        <div class="doorFrame">
+          <div class="doorGlass" id="doorGlass">
+            <div class="waterLayer"></div>
+            <div class="drum" id="drum"></div>
+          </div>
+        </div>
+        <div class="legRow"><span class="leg"></span><span class="leg"></span></div>
+      </div>
+      <div class="washCopy">
+        <p id="washCopyText">Your photo is progressing through its cycle, undergoing a full wash, rinse, and spin.</p>
+      </div>
+    </div>
+
+    <div class="doneCard" id="doneCard" hidden>
+      <h3>Cycle complete</h3>
+      <p>Your photo has finished its wash cycle and is ready to collect.</p>
+      <div class="doneGrid" id="doneGrid"></div>
+      <button type="button" class="ghostBtn" id="resetWashBtn">Begin another cycle</button>
+    </div>
+  </div>
+</section>
+
+<section id="convert" class="convertSection">
+  <div class="convertHead">
+    <h2>The Converter</h2>
+    <p>Select an output format, then add a file below. It the best and also most throughout.</p>
+  </div>
+
+  <div class="convertControls">
+    <label class="formatPicker">
+      Output format for new files
+      <select id="formatSelect">
+        <option value="pdf">PDF</option>
+        <option value="png">PNG</option>
+        <option value="jpg">JPG</option>
+        <option value="mp3">MP3</option>
+        <option value="mp4">MP4</option>
+        <option value="txt">TXT</option>
+        <option value="docx">DOCX</option>
+        <option value="zip">ZIP</option>
+        <option value="gif">GIF</option>
+        <option value="csv">CSV</option>
+      </select>
+    </label>
+    <div class="convertDrop" id="convertDrop">
+      Drag a file here, or click to choose one. Add as many as you like.
+      <input type="file" id="convertInput" multiple>
+    </div>
+  </div>
+
+  <ul class="convertQueue" id="convertQueue"></ul>
+</section>
+
+<p class="noteStrip">All processing happens locally in your browser. Photos and files are kept in this browser's storage and are not uploaded to a server.</p>
+
+<footer>
+  All processing happens locally in your browser. Files never leave this device.
+</footer>
+
+<script>
+/* ---------------- Shared storage helpers ---------------- */
+const WASH_KEY = 'rinseCycleWash';
+const CONVERT_KEY = 'rinseCycleConvertQueue';
+const MAX_IMAGE_BYTES = 1.5 * 1024 * 1024;
+const MAX_WASH_TOTAL_BYTES = 3 * 1024 * 1024;
+const MAX_CONVERT_BYTES = 2 * 1024 * 1024;
+
+function fileToDataURL(file){
+  return new Promise((resolve,reject)=>{
+    const reader = new FileReader();
+    reader.onload = ()=>resolve(reader.result);
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
+}
+
+function readWashState(){
+  try{
+    const raw = localStorage.getItem(WASH_KEY);
+    return raw ? JSON.parse(raw) : null;
+  }catch(e){ return null; }
+}
+function writeWashState(state){
+  try{
+    localStorage.setItem(WASH_KEY, JSON.stringify(state));
+    return true;
+  }catch(e){
+    alert('Storage capacity has been reached. Try fewer or smaller photos.');
+    return false;
+  }
+}
+function clearWashState(){
+  localStorage.removeItem(WASH_KEY);
+}
+
+function readConvertQueue(){
+  try{
+    const raw = localStorage.getItem(CONVERT_KEY);
+    return raw ? JSON.parse(raw) : [];
+  }catch(e){ return []; }
+}
+function writeConvertQueue(queue){
+  try{
+    localStorage.setItem(CONVERT_KEY, JSON.stringify(queue));
+    return true;
+  }catch(e){
+    alert('Storage capacity has been reached. Try a smaller file.');
+    return false;
+  }
+}
+
+/* ---------------- Image washer ---------------- */
+const washDrop = document.getElementById('washDrop');
+const washInput = document.getElementById('washInput');
+const washPickBtn = document.getElementById('washPickBtn');
+const washerRig = document.getElementById('washerRig');
+const drum = document.getElementById('drum');
+const statusTextEl = document.getElementById('statusText');
+const doorGlass = document.getElementById('doorGlass');
+const doneCard = document.getElementById('doneCard');
+const doneGrid = document.getElementById('doneGrid');
+const resetWashBtn = document.getElementById('resetWashBtn');
+
+const WASH_MS = 20 * 60 * 1000;
+const statusMessages = [
+  'Soaking the photo',
+  'Working in the detergent',
+  'First rinse',
+  'Checking for stains, none found',
+  'Second rinse',
+  'Spinning up',
+  'Easing back down',
+  'Final rinse',
+  'Nearly there',
+  'Still spinning',
+  'Just a little longer'
+];
+
+let washTimerId = null;
+let bubbleTimerId = null;
+let messageTimerId = null;
+
+function pickPickBtnClick(e){
+  e.stopPropagation();
+  washInput.click();
+}
+washPickBtn.addEventListener('click', pickPickBtnClick);
+washDrop.addEventListener('click', ()=>washInput.click());
+
+['dragenter','dragover'].forEach(evt=>{
+  washDrop.addEventListener(evt,(e)=>{e.preventDefault();washDrop.classList.add('hover');});
+});
+['dragleave','drop'].forEach(evt=>{
+  washDrop.addEventListener(evt,(e)=>{e.preventDefault();washDrop.classList.remove('hover');});
+});
+washDrop.addEventListener('drop',(e)=>{
+  const files = Array.from(e.dataTransfer.files).filter(f=>f.type.startsWith('image/'));
+  if(files.length) beginWash(files);
+});
+washInput.addEventListener('change', ()=>{
+  const files = Array.from(washInput.files);
+  if(files.length) beginWash(files);
+  washInput.value = '';
+});
+
+async function beginWash(files){
+  const trimmed = files.slice(0,8);
+  const oversized = trimmed.some(f=>f.size > MAX_IMAGE_BYTES);
+  if(oversized){
+    alert('One or more photos are too large for a wash cycle, try photos under 1.5 MB.');
+    return;
+  }
+  const totalBytes = trimmed.reduce((sum,f)=>sum+f.size,0);
+  if(totalBytes > MAX_WASH_TOTAL_BYTES){
+    alert('This load is too large for a wash cycle, try fewer photos, or smaller ones.');
+    return;
+  }
+  const images = await Promise.all(trimmed.map(async f=>({
+    name: f.name,
+    type: f.type,
+    dataURL: await fileToDataURL(f)
+  })));
+  const state = {
+    images: images,
+    startedAt: Date.now(),
+    durationMs: WASH_MS,
+    collected: false
+  };
+  if(writeWashState(state)){
+    renderWash(state);
+  }
+}
+
+function renderWash(state){
+  washDrop.hidden = true;
+  doneCard.hidden = true;
+  drum.innerHTML = '';
+  doorGlass.classList.remove('unlocked');
+  clearInterval(washTimerId);
+  clearInterval(bubbleTimerId);
+  clearInterval(messageTimerId);
+
+  const elapsed = Date.now() - state.startedAt;
+  if(elapsed >= state.durationMs){
+    showWashDone(state);
+    return;
+  }
+
+  washerRig.hidden = false;
+
+  state.images.forEach(img=>{
+    const el = document.createElement('img');
+    el.src = img.dataURL;
+    el.className = 'tumbler';
+    const duration = 3 + Math.random()*2.5;
+    const delay = Math.random()*-4;
+    el.style.animationDuration = duration+'s';
+    el.style.animationDelay = delay+'s';
+    drum.appendChild(el);
+  });
+
+  spawnBubbles();
+  bubbleTimerId = setInterval(spawnBubbles, 900);
+  cycleStatusMessage();
+  messageTimerId = setInterval(cycleStatusMessage, 7000 + Math.random()*4000);
+
+  function tick(){
+    const remainMs = Math.max(0, state.durationMs - (Date.now() - state.startedAt));
+    if(remainMs <= 0){
+      clearInterval(washTimerId);
+      clearInterval(bubbleTimerId);
+      clearInterval(messageTimerId);
+      showWashDone(state);
+    }
+  }
+  tick();
+  washTimerId = setInterval(tick, 1000);
+}
+
+function spawnBubbles(){
+  for(let i=0;i<3;i++){
+    const b = document.createElement('div');
+    b.className = 'bubble';
+    const size = 4 + Math.random()*8;
+    b.style.width = size+'px';
+    b.style.height = size+'px';
+    b.style.left = (10 + Math.random()*80)+'%';
+    b.style.animationDuration = (2.5 + Math.random()*2)+'s';
+    drum.appendChild(b);
+    setTimeout(()=>b.remove(), 4500);
+  }
+}
+
+function cycleStatusMessage(){
+  const msg = statusMessages[Math.floor(Math.random()*statusMessages.length)];
+  statusTextEl.textContent = msg;
+}
+
+function showWashDone(state){
+  statusTextEl.textContent = 'Cycle complete';
+  doorGlass.classList.add('unlocked');
+
+  doneGrid.innerHTML = '';
+  state.images.forEach(img=>{
+    const item = document.createElement('div');
+    item.className = 'doneItem';
+    item.innerHTML = '<img src="'+img.dataURL+'" alt="">'+
+      '<a href="'+img.dataURL+'" download="'+img.name+'">Collect</a>';
+    doneGrid.appendChild(item);
+  });
+
+  washerRig.hidden = true;
+  doneCard.hidden = false;
+}
+
+resetWashBtn.addEventListener('click', ()=>{
+  clearWashState();
+  doneCard.hidden = true;
+  washDrop.hidden = false;
+});
+
+/* resume a wash already in progress, saved from an earlier visit */
+(function resumeWash(){
+  const state = readWashState();
+  if(state) renderWash(state);
+})();
+
+/* ---------------- File converter ---------------- */
+const convertDrop = document.getElementById('convertDrop');
+const convertInput = document.getElementById('convertInput');
+const formatSelect = document.getElementById('formatSelect');
+const convertQueue = document.getElementById('convertQueue');
+
+const CONVERT_MS = 2 * 60 * 1000;
+const convertTimers = {};
+
+convertDrop.addEventListener('click', ()=>convertInput.click());
+['dragenter','dragover'].forEach(evt=>{
+  convertDrop.addEventListener(evt,(e)=>{e.preventDefault();convertDrop.classList.add('hover');});
+});
+['dragleave','drop'].forEach(evt=>{
+  convertDrop.addEventListener(evt,(e)=>{e.preventDefault();convertDrop.classList.remove('hover');});
+});
+convertDrop.addEventListener('drop',(e)=>{
+  const files = Array.from(e.dataTransfer.files);
+  files.forEach(f=>queueConvert(f, formatSelect.value));
+});
+convertInput.addEventListener('change', ()=>{
+  const files = Array.from(convertInput.files);
+  files.forEach(f=>queueConvert(f, formatSelect.value));
+  convertInput.value = '';
+});
+
+function baseName(name){
+  const idx = name.lastIndexOf('.');
+  return idx > 0 ? name.slice(0,idx) : name;
+}
+
+async function queueConvert(file, targetExt){
+  if(file.size > MAX_CONVERT_BYTES){
+    alert('That file is too large to convert here, try a file under 2 MB.');
+    return;
+  }
+  const dataURL = await fileToDataURL(file);
+  const entry = {
+    id: 'c'+Date.now()+Math.random().toString(36).slice(2,8),
+    name: file.name,
+    targetExt: targetExt,
+    dataURL: dataURL,
+    startedAt: Date.now(),
+    durationMs: CONVERT_MS
+  };
+  const queue = readConvertQueue();
+  queue.push(entry);
+  if(writeConvertQueue(queue)){
+    renderConvertItem(entry);
+  }
+}
+
+function renderConvertItem(entry){
+  const li = document.createElement('li');
+  li.className = 'queueItem';
+  li.dataset.id = entry.id;
+
+  const meta = document.createElement('div');
+  meta.className = 'fileMeta';
+  meta.innerHTML = '<div class="name">'+entry.name+'</div>'+
+    '<div class="tag">Converting to .'+entry.targetExt+'</div>';
+
+  const action = document.createElement('div');
+  action.className = 'queueAction';
+  const status = document.createElement('span');
+  status.className = 'statusLabel';
+  status.textContent = 'Converting';
+  action.appendChild(status);
+
+  li.appendChild(meta);
+  li.appendChild(action);
+  convertQueue.appendChild(li);
+
+  function tick(){
+    const elapsed = Date.now() - entry.startedAt;
+    if(elapsed >= entry.durationMs){
+      clearInterval(convertTimers[entry.id]);
+      const newName = baseName(entry.name)+'.'+entry.targetExt;
+      action.innerHTML = '<a href="'+entry.dataURL+'" download="'+newName+'">Download</a>';
+    }
+  }
+  tick();
+  convertTimers[entry.id] = setInterval(tick, 1000);
+}
+
+/* resume any conversions already in progress, saved from an earlier visit */
+(function resumeConvertQueue(){
+  readConvertQueue().forEach(entry=>renderConvertItem(entry));
+})();
+</script>
+</body>
+</html>
